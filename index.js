@@ -14,8 +14,10 @@ sequelize.authenticate().then(()=>{
     });
 
 const articleRouter = require('./routes/article');
+const authorRouter = require('./routes/author');
 app.use('/', articleRouter);
 app.use('/article',articleRouter);
+app.use('/',authorRouter);
 app.listen(3006, ()=> {
     console.log("Swerver is running on http://localhost:3006");
 });
