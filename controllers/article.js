@@ -19,7 +19,12 @@ const getArticleBySlug =(req,res) =>{
         },
         include:[{
             model: models.Author
-        }]  
+        },{
+            model: models.Tags, 
+            through:{
+                model: models.ArticleTags
+            } 
+        }],  
     })
     .then(article =>{
         console.log(article);
