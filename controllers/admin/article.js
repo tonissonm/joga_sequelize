@@ -23,8 +23,53 @@ const createArticle = (req,res) =>{
     })
 };
 
+const updateArticle = async (req,res) =>{
+    const {id} = req.params;
+    if(req.method === 'GET'){
+        try{
+            const article = await models.Article.findByPk(id);
+            if(!article){
+                return res.status(404).json({ message: 'Article not found.'})
+            }
+            const authors = await models.Author.findAll();
+            return res.status(200).json({ 
+                article, 
+                authors 
+            });
+        } catch (error) {
+            return res.status(500).json({ message: error.message });
+        }
+    } else if (req.method === 'POST') {
+        try {
+            const { id, name, slug, image, body, published, author_id, updatedAt } = req.body;
+            const updatedArticle = await models.Article.update({
+                name: name,
+                slug: slug,
+                image: image,
+                body: body,
+                published:published,
+                author_id: author_id,
+                updatedAt: updatedAt 
+            }, {
+                where: { id: id }
+            });
+            if (updatedArticle[0] === 0) {
+                return res.status(404).json({ message: 'Article not found or no changes were made' });
+            }
+
+            return res.status(200).json({ message: 'Article updated successfully' });
+        } catch (error) {
+            return res.status(500).json({ message: error.message });
+        }
+    } else {
+        return res.status(405).json({ message: 'Method Not Allowed' });
+    }
+
+}; 
+
 
  
 module.exports = {
-    createArticle
+    createArticle,
+    updateArticle
 };
