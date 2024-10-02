@@ -41,7 +41,7 @@ const updateArticle = async (req,res) =>{
         }
     } else if (req.method === 'POST') {
         try {
-            const { id, name, slug, image, body, published, author_id, updatedAt } = req.body;
+            const { name, slug, image, body, published, author_id, updatedAt } = req.body;
             const updatedArticle = await models.Article.update({
                 name: name,
                 slug: slug,
@@ -65,11 +65,26 @@ const updateArticle = async (req,res) =>{
         return res.status(405).json({ message: 'Method Not Allowed' });
     }
 
-}; 
+};
+const deleteArticle = async (req,res) => {
+    const {id} = req.params;
+    try{
+        const article = await models.Article.findByPk(id);
+        if(!article){
+            return res.status(404).sjon({message:'Article not found'});
+        }
+        await article.destroy();
+        return res.status(200).json({message: "Article has been deleted."});
+    }
+    catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+} 
 
 
  
 module.exports = {
     createArticle,
-    updateArticle
+    updateArticle,
+    deleteArticle
 };
